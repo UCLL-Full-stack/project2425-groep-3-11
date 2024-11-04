@@ -16,6 +16,19 @@ export class Shoppingcart {
         this.totalPrice += product.getPrice();
     }
 
+    removeProductFromShoppingCart(productId: number): boolean {
+        const productIndex = this.products.findIndex(product => product.getId() === productId);
+
+        if (productIndex === -1) {
+            return false; 
+        }
+
+        const productToRemove = this.products[productIndex];
+        this.products.splice(productIndex, 1); 
+        this.totalPrice -= productToRemove.getPrice(); 
+        return true; 
+    }
+
     public getId(): number | undefined {
         return this.id;
     }
