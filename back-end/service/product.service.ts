@@ -6,13 +6,14 @@ const getAllProducts = async (): Promise<Product[]> => {
     return productDb.getAllProducts();
 };
 
-const getProductById = async ({ id }: { id: number }): Promise<Product | undefined> => {
+const getProductById = async ({ id }: { id: number }): Promise<Product | null> => {
     const product = productDb.getProductById({ id });
     if (!product) {
         throw new Error('Product not found');
     }
     return product;
 };
+
 const getReviewsForProduct = async ({ id }: { id: number }): Promise<Review[]> => {
     const reviews = productDb.getReviewsForProduct({ id });
     if (!reviews) {
@@ -20,6 +21,7 @@ const getReviewsForProduct = async ({ id }: { id: number }): Promise<Review[]> =
     }
     return reviews;
 };
+
 const createProduct = async (product: Product): Promise<Product> => {
     return productDb.createProduct(product);
 };

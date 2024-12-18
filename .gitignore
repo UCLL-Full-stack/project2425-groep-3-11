@@ -105,3 +105,5 @@ dist
 
 .DS_Store
 .vscode
+
+back-end/repository/prisma/migrations

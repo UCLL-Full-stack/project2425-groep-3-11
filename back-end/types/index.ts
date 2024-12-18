@@ -3,6 +3,7 @@ type UserInput = {
     username: string;
     email: string;
     password: string;
+    role: Role;
 };
 
 type ReviewInput = {
@@ -24,7 +25,12 @@ type ShoppingCartInput = {
     products: ProductInput[];
     totalPrice: number;
 };
-
+// TODO: Add role to authentication response
+type AuthenticationResponse = {
+    token: string;
+    username: string;
+    role: string;
+};
 type Role = 'admin' | 'student' | 'lecturer' | 'guest';
 
-export { UserInput, ReviewInput, ProductInput, ShoppingCartInput, Role };
+export { UserInput, ReviewInput, ProductInput, ShoppingCartInput, Role, AuthenticationResponse };
