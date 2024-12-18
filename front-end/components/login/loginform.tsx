@@ -1,20 +1,90 @@
 import React, { useState } from 'react';
-
+import UserService from '@services/UserService';
+import { useRouter } from 'next/router';
 const Loginform: React.FC = () => {
     const [isLogin, setIsLogin] = useState(true);
+    const router = useRouter();
 
     const handleToggle = () => {
         setIsLogin((prev) => !prev);
     };
 
-    const handleLoginSubmit = (event: React.FormEvent) => {
+    const handleLoginSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('Login form submitted');
+
+        const formData = new FormData(event.target as HTMLFormElement);
+        const username = formData.get('username') as string;
+        const password = formData.get('password') as string;
+
+        if (!username || !password) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        try {
+            const response = await UserService.loginUser(username, password);
+
+            if (response.token) {
+                // Extract details from the response
+                const { token, username: loggedInUsername, role } = response;
+
+                // Save user details in session storage
+                sessionStorage.setItem('token', token);
+                sessionStorage.setItem('username', loggedInUsername);
+                sessionStorage.setItem('role', role);
+
+                alert('Login successful!');
+                router.push('/');
+            } else {
+                throw new Error(response.message || 'Invalid login response.');
+            }
+        } catch (error) {
+            console.error('Login Error:', error);
+            alert('Login failed. Please check your credentials or try again later.');
+        }
     };
 
-    const handleRegisterSubmit = (event: React.FormEvent) => {
+    const handleRegisterSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('Register form submitted');
+
+        const formData = new FormData(event.target as HTMLFormElement);
+        const username = formData.get('username') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        if (!username || !email || !password) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        const data = {
+            username,
+            email,
+            password,
+            role: 'user', // Default role
+        };
+
+        try {
+            const response = await UserService.registerUser(data);
+
+            if (response.token) {
+                // Extract details from the response
+                const { token, username: registeredUsername, role } = response;
+
+                // Save user details in session storage
+                sessionStorage.setItem('token', token);
+                sessionStorage.setItem('username', registeredUsername);
+                sessionStorage.setItem('role', role);
+
+                alert('Registration successful!');
+                router.push('/');
+            } else {
+                throw new Error(response.message || 'Invalid registration response.');
+            }
+        } catch (error) {
+            console.error('Registration Error:', error);
+            alert('Registration failed. Please check your details or try again later.');
+        }
     };
 
     return (
@@ -50,17 +120,37 @@ const Loginform: React.FC = () => {
                 {/* Form */}
                 {isLogin ? (
                     <form onSubmit={handleLoginSubmit} style={styles.form}>
-                        <input type="text" placeholder="Username" style={styles.input} />
-                        <input type="password" placeholder="Password" style={styles.input} />
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            style={styles.input}
+                        />
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            style={styles.input}
+                        />
                         <button type="submit" style={styles.submitButton}>
                             Log in
                         </button>
                     </form>
                 ) : (
                     <form onSubmit={handleRegisterSubmit} style={styles.form}>
-                        <input type="text" placeholder="Username" style={styles.input} />
-                        <input type="email" placeholder="Email" style={styles.input} />
-                        <input type="password" placeholder="Password" style={styles.input} />
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            style={styles.input}
+                        />
+                        <input type="email" name="email" placeholder="Email" style={styles.input} />
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            style={styles.input}
+                        />
                         <button type="submit" style={styles.submitButton}>
                             Register
                         </button>

@@ -12,3 +12,11 @@ export type Product = {
     stock: number;
     reviews?: Review[];
 };
+
+export type User = {
+    id?: number;
+    username: string;
+    password: string;
+    email: string;
+    role: string;
+};
