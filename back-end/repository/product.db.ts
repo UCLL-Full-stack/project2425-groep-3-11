@@ -1,143 +1,142 @@
+import { PrismaClient, Product as PrismaProduct, Review as PrismaReview } from '@prisma/client';
 import { Product } from "../model/product";
 import { Review } from "../model/review";
 
-const products = [
-    new Product({
-        id: 1,
-        name: "Toy Train",
-        price: 35.10,
-        description: "A toy train from the ABD company suitable for children aged 5-12 years old.",
-        stock: 10,
-        reviews: [
-            new Review({
-                id: 1,
-                score: 1,
-                comment: "The toy broke after one use. Very disappointing.",
-                date: new Date('2024-01-10')
-            }),
-            new Review({
-                id: 2,
-                score: 5,
-                comment: "My kids love this toy train! Great quality and fun to play with.",
-                date: new Date('2024-01-15')
-            })
-        ]
-    }),
-    new Product({
-        id: 2,
-        name: "smartwatch",
-        price: 199.99,
-        description: "A sleek smartwatch with heart-rate monitoring and GPS tracking",
-        stock: 15,
-        reviews: []
+const prisma = new PrismaClient();
 
-    }),
-    new Product({
-        id: 3,
-        name: "backpack",
-        price: 49.99,
-        description: "A durable backpack with multiple compartments and waterproof material",
-        stock: 25,
-        reviews: []
-
-    }),
-    new Product({
-        id: 4,
-        name: "mirror",
-        price: 25.50,
-        description: "A round wall mirror, 24 inches in diameter with a modern metal frame",
-        stock: 20,
-        reviews: []
-
-    }),
-    new Product({
-        id: 5,
-        name: "book",
-        price: 15.00,
-        description: "A mystery novel by a bestselling author, great for readers of all ages",
-        stock: 30,
-        reviews: []
-
-    }),
-    new Product({
-        id: 6,
-        name: "wallet",
-        price: 20.00,
-        description: "A leather wallet with multiple card slots and a coin pouch",
-        stock: 40,
-        reviews: []
-
-    }),
-    new Product({
-        id: 7,
-        name: "power bank",
-        price: 30.99,
-        description: "A compact 10,000mAh power bank with fast-charging capabilities",
-        stock: 18,
-        reviews: []
-
-    }),
-    new Product({
-        id: 8,
-        name: "rain boots",
-        price: 45.00,
-        description: "Waterproof rain boots with a comfortable insole, available in various sizes",
-        stock: 12,
-        reviews: []
-
-    }),
-    new Product({
-        id: 9,
-        name: "tablet",
-        price: 299.99,
-        description: "A 10-inch tablet with high resolution display and 64GB storage",
-        stock: 8,
-        reviews: []
-
-    }),
-    new Product({
-        id: 10,
-        name: "treadmill",
-        price: 499.00,
-        description: "A foldable treadmill with multiple speed settings and an LCD display",
-        stock: 5,
-        reviews: []
-
-    }),
-    new Product({
-        id: 11,
-        name: "printer",
-        price: 125.99,
-        description: "A wireless color printer with high-quality photo printing capabilities",
-        stock: 10,
-        reviews: []
-
-    })
-];
-
-
-const getProductById=({ id }: { id: number }): Product | undefined => {
+// Fetch a single product by ID (including reviews and shopping carts)
+const getProductById = async ({ id }: { id: number }): Promise<Product | null> => {
     try {
-        return products.find((product) => product.getId() === id) || undefined;
+        const product = await prisma.product.findUnique({
+            where: { id },
+            include: {
+                reviews: true,
+                shoppingCarts: true, // Include Many-to-Many relation with ShoppingCarts
+            },
+        });
+
+        if (!product) return null;
+
+        return Product.from(product);
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
     }
-}
+};
 
-const getAllProducts = ():Product[] => products;
+// Fetch all products (including reviews and shopping carts)
+const getAllProducts = async (): Promise<Product[]> => {
+    try {
+        const productsPrisma = await prisma.product.findMany({
+            include: {
+                reviews: true,
+                shoppingCarts: true,
+            },
+        });
 
-const createProduct = (product:Product):Product=> {
-    products.push(product)
-    return product
-}
-
-const getReviewsForProduct = ({ id }: { id: number }): Review[] => {
-    const product = getProductById({ id });
-    if (!product) {
-        throw new Error('Product not found');
+        return productsPrisma.map((productPrisma) => Product.from(productPrisma));
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
-    return product.getReviews();
-}
+};
 
-export default { getAllProducts, getProductById, createProduct, getReviewsForProduct }
+// Create a new product
+const createProduct = async (product: Product): Promise<Product> => {
+    try {
+        const createdProduct = await prisma.product.create({
+            data: {
+                name: product.getName(),
+                price: product.getPrice(),
+                description: product.getDescription(),
+                stock: product.getStock(),
+            },
+        });
+
+        return Product.from(createdProduct);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to create product');
+    }
+};
+
+// Fetch reviews for a product
+const getReviewsForProduct = async ({ id }: { id: number }): Promise<Review[]> => {
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id },
+            include: { 
+                reviews: {
+                    include: {
+                        user: true,
+                        product: true,
+                    },
+                },
+            },
+        });
+
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        return product.reviews.map((review) => Review.from(review));
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error fetching reviews');
+    }
+};
+
+// Add a product to a shopping cart
+const addProductToShoppingCart = async ({
+    productId,
+    cartId,
+}: {
+    productId: number;
+    cartId: number;
+}): Promise<void> => {
+    try {
+        await prisma.shoppingCart.update({
+            where: { id: cartId },
+            data: {
+                products: {
+                    connect: { id: productId }, // Connect product to shopping cart
+                },
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error adding product to shopping cart');
+    }
+};
+
+// Remove a product from a shopping cart
+const removeProductFromShoppingCart = async ({
+    productId,
+    cartId,
+}: {
+    productId: number;
+    cartId: number;
+}): Promise<void> => {
+    try {
+        await prisma.shoppingCart.update({
+            where: { id: cartId },
+            data: {
+                products: {
+                    disconnect: { id: productId }, // Disconnect product from shopping cart
+                },
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error removing product from shopping cart');
+    }
+};
+
+export default {
+    getAllProducts,
+    getProductById,
+    createProduct,
+    getReviewsForProduct,
+    addProductToShoppingCart,
+    removeProductFromShoppingCart,
+};

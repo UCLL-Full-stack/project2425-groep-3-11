@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  password     String
+  shoppingCart ShoppingCart? // One-to-One: Each user has one shopping cart
+  reviews      Review[] // One-to-Many: A user can write multiple reviews
+  role         String
+}
+
+model Product {
+  id            Int            @id @default(autoincrement())
+  name          String
+  price         Float
+  description   String
+  stock         Int
+  reviews       Review[] // One-to-Many: A product can have multiple reviews
+  shoppingCarts ShoppingCart[] // Many-to-Many
+}
+
+model ShoppingCart {
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int       @unique
+  products   Product[] // Many-to-Many: Shopping cart contains multiple products
+  totalPrice Float     @default(0)
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  score     Int
+  comment   String
+  date      DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}

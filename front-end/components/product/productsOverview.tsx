@@ -12,17 +12,21 @@ const ProductsOverview = () => {
   const image = "https://placehold.co/600x400";
   const router = useRouter(); 
 
-  const fetchProducts = async () => {
-    try {
-      const productResponse = await ProductService.getAllProducts();
-      const productData = await productResponse.json();
+const fetchProducts = async () => {
+  try {
+    const productResponse = await ProductService.getAllProducts();
+    const productData = await productResponse.json();
+    if (Array.isArray(productData)) {
       setProducts(productData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch products:", error);
-      setLoading(false);
+    } else {
+      console.error("Expected array but got:", productData);
     }
-  };
+    setLoading(false);
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchProducts();
@@ -32,11 +36,12 @@ const ProductsOverview = () => {
     router.push(`/products/${productId}`); 
   };
 
-  const calculateAverageScore = (reviews: { score: number }[]) => {
-    if (reviews.length === 0) return 0;
+  const calculateAverageScore = (reviews?: { score: number }[]) => {
+    if (!reviews || reviews.length === 0) return 0; 
     const totalScore = reviews.reduce((sum, review) => sum + review.score, 0);
     return totalScore / reviews.length;
   };
+
 
   return (
     <>

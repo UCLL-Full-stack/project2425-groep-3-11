@@ -5,17 +5,18 @@ import { Product } from '@types';
 
 
 interface ProductInfoProps {
-  product: Product;
+  product: Product | null;
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   if (!product) return null;
 
   const image = "https://placehold.co/600x400"; 
-  const reviewCount = product.reviews.length;
+  const reviews =  product.reviews ?? [];
+  const reviewCount = reviews.length;
 
   const averageRating = reviewCount > 0 
-    ? product.reviews.reduce((acc, review) => acc + review.score, 0) / reviewCount 
+    ? reviews.reduce((acc, review) => acc + review.score, 0) / reviewCount 
     : 2;
 
   return (
@@ -45,7 +46,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
         {reviewCount > 0 ? (
           <ul className="space-y-2">
-            {product.reviews.map(review => (
+            {reviews.map(review => (
               <li key={review.id} className="border-b pb-2">
                   <div className="flex items-center mb-1">
                     {[...Array(5)].map((_, index) => ( 

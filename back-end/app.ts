@@ -8,6 +8,7 @@ import { productRouter } from './controller/product.routes';
 import { reviewRouter } from './controller/review.routes';
 import { shoppingcartRouter } from './controller/shoppingcart.routes';
 import { userRouter } from './controller/user.routes';
+import { expressjwt } from 'express-jwt';
 
 const app = express();
 dotenv.config();
@@ -16,16 +17,34 @@ const port = process.env.APP_PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use(
+    expressjwt({
+        secret: process.env.JWT_SECRET || 'default_secret',
+        algorithms: ['HS256'],
+    }).unless({
+        path: [
+            '/api-docs',
+            /^\/api-docs\/.*/,
+            '/users/login',
+            '/users/signup',
+            '/status',
+            '/products',
+            /^\/products\/.*/,
+            // '/reviews'
+        ],
+    })
+);
+
 app.use('/products', productRouter);
 app.use('/reviews', reviewRouter);
 app.use('/shoppingcart', shoppingcartRouter);
 app.use('/users', userRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res.status(400).json({
-    status: 'application error',
-    message: err.message || 'An error occurred',
-  });
+    res.status(400).json({
+        status: 'application error',
+        message: err.message || 'An error occurred',
+    });
 });
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
