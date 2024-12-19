@@ -18,6 +18,7 @@ type ProductInput = {
     price: number;
     description: string;
     stock: number;
+    quantity: number;
 };
 
 type ShoppingCartInput = {

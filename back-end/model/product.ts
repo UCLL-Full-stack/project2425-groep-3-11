@@ -7,6 +7,7 @@ export class Product {
     private price: number;
     private description: string;
     private stock: number;
+    private quantity: number = 1;
     // private reviews: Review[];
 
     constructor(product: {
@@ -15,6 +16,7 @@ export class Product {
         price: number;
         description: string;
         stock: number;
+        quantity?: number;
         // reviews: Review[];
     }) {
         this.validate(product);
@@ -23,6 +25,7 @@ export class Product {
         this.price = product.price;
         this.description = product.description;
         this.stock = product.stock;
+        this.quantity = product.quantity ?? 1;
         // this.reviews = product.reviews;
     }
 
@@ -44,6 +47,10 @@ export class Product {
 
     public getStock(): number {
         return this.stock;
+    }
+
+    public getQuantity(): number {
+        return this.quantity;
     }
     // public getReviews(): Review[] {
     //     return this.reviews;
@@ -81,13 +88,14 @@ export class Product {
     // addReviewToProduct(review: Review) {
     //     this.reviews.push(review);
     // }
-    static from({ id, name, price, description, stock }: ProductPrisma) {
+    static from({ id, name, price, description, stock, quantity }: ProductPrisma) {
         return new Product({
             id,
             name,
             price,
             description,
             stock,
+            quantity,
             // reviews,
         });
     }

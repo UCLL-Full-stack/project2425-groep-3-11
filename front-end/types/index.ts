@@ -10,6 +10,7 @@ export type Product = {
     price: number;
     description: string;
     stock: number;
+    quantity: number;
     reviews?: Review[];
 };
 

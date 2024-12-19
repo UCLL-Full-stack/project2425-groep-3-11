@@ -40,7 +40,10 @@ export class Shoppingcart {
     }
 
     public calculateTotalPrice(): number {
-        return this.products.reduce((sum, product) => sum + product.getPrice(), 0);
+        return this.products.reduce(
+            (total, product) => total + product.getPrice() * product.getQuantity(),
+            0
+        );
     }
 
     public getProducts(): Product[] {
@@ -71,7 +74,7 @@ export class Shoppingcart {
             id,
             products: products.map(Product.from),
             totalPrice: products.reduce(
-                (sum: number, product: ProductPrisma) => sum + product.price,
+                (sum: number, product: ProductPrisma) => sum + product.price * product.quantity,
                 0
             ),
         });

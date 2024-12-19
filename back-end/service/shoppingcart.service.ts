@@ -62,6 +62,18 @@ const clearShoppingCart = async ({ id }: { id: number }): Promise<Shoppingcart |
     }
     return shoppingCart;
 };
+
+const changeProductQuantity = async (
+    cartId: number,
+    productId: number,
+    quantity: number
+): Promise<Shoppingcart | null> => {
+    const shoppingCart = shoppingcartDb.changeProductQuantity(cartId, productId, quantity);
+    if (!shoppingCart) {
+        throw new Error('Failed to change product quantity');
+    }
+    return shoppingCart;
+};
 export default {
     getShoppingCartById,
     getShoppingCartByUserId,
@@ -69,4 +81,5 @@ export default {
     addProductToCart,
     removeProductFromCart,
     clearShoppingCart,
+    changeProductQuantity,
 };

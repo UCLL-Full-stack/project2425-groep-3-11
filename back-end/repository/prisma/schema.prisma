@@ -23,6 +23,7 @@ model Product {
   price         Float
   description   String
   stock         Int
+  quantity      Int
   reviews       Review[] // One-to-Many: A product can have multiple reviews
   shoppingCarts ShoppingCart[] // Many-to-Many
 }

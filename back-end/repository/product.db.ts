@@ -1,6 +1,6 @@
 import { PrismaClient, Product as PrismaProduct, Review as PrismaReview } from '@prisma/client';
-import { Product } from "../model/product";
-import { Review } from "../model/review";
+import { Product } from '../model/product';
+import { Review } from '../model/review';
 
 const prisma = new PrismaClient();
 
@@ -50,6 +50,7 @@ const createProduct = async (product: Product): Promise<Product> => {
                 price: product.getPrice(),
                 description: product.getDescription(),
                 stock: product.getStock(),
+                quantity: product.getQuantity(),
             },
         });
 
@@ -65,7 +66,7 @@ const getReviewsForProduct = async ({ id }: { id: number }): Promise<Review[]> =
     try {
         const product = await prisma.product.findUnique({
             where: { id },
-            include: { 
+            include: {
                 reviews: {
                     include: {
                         user: true,
