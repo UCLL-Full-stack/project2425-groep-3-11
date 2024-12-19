@@ -24,4 +24,13 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
     }
 });
 
+userRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await userService.getUserById(parseInt(req.params.id));
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+});
+
 export { userRouter };

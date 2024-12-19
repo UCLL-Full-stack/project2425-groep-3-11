@@ -22,17 +22,24 @@ const Loginform: React.FC = () => {
         }
 
         try {
-            const response = await UserService.loginUser(username, password);
+            const user = { username, password };
+            const response = await UserService.loginUser(user);
 
             if (response.token) {
                 // Extract details from the response
                 const { token, username: loggedInUsername, role } = response;
 
                 // Save user details in session storage
-                sessionStorage.setItem('token', token);
-                sessionStorage.setItem('username', loggedInUsername);
-                sessionStorage.setItem('role', role);
+                const loggedInUser = {
+                token: response.token,
+                username: response.username,
+                role: response.role,
+            };
 
+            // Save user details in session storage with the key "loggedInUser"
+            sessionStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+            console.log("Logged in user:", loggedInUser);
+                
                 alert('Login successful!');
                 router.push('/');
             } else {

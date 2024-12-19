@@ -1,7 +1,10 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
-import { Product } from '@types';
+import { Product, ShoppingCart } from '@types';
+import { useEffect, useState } from "react";
+import ProductService from "@services/ProductService";
+import ShoppingCartService from '@services/ShoppingCartService';
 
 
 interface ProductInfoProps {
@@ -9,6 +12,9 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+  const [cartId, setCartId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>(null);
   if (!product) return null;
 
   const image = "https://placehold.co/600x400"; 
@@ -19,6 +25,57 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     ? reviews.reduce((acc, review) => acc + review.score, 0) / reviewCount 
     : 2;
 
+  useEffect(() => {
+      const fetchCart = async () => {
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+          setMessage('No user logged in.');
+          return;
+        }
+
+        const user = JSON.parse(loggedInUser);
+        try {
+          const response = await ShoppingCartService.getShoppingCartByUsername(user.username);
+          if (response.ok) {
+            const data = await response.json();
+            setCartId(data.id);
+          } else {
+            setMessage('Failed to fetch shopping cart.');
+          }
+        } catch (error) {
+          console.error('Error fetching shopping cart:', error);
+          setMessage('Error fetching shopping cart.');
+        }
+      };
+
+      fetchCart();
+    }, []);
+
+  const addToCart = async () => {
+    if (!cartId || !product.id) {
+      setMessage('Cart or product not found.');
+      return;
+    }
+    if (!product) return null;
+    setLoading(true);
+    setMessage(null);
+    try {
+      
+      const response = await ShoppingCartService.addProductToCart(cartId, product.id);
+      if (response.ok) {
+        setMessage('Product added to cart successfully.');
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message || 'Failed to add product to cart.');
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      setMessage('Error adding product to cart.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <div className="flex flex-col md:flex-row items-start text-left p-4">
       <img src={image} alt={product.name} className="w-40 h-40 rounded-lg mb-4 md:mb-0 md:mr-6" />
@@ -28,8 +85,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         <p className="text-gray-700">{product.description}</p>
         <p className="text-lg font-medium text-gray-800">€{product.price.toFixed(2)}</p>
         
-        <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800">
-          Add to cart
+        <button 
+          onClick={addToCart} 
+          className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 disabled:bg-gray-400"
+          disabled={loading}
+        >
+            {loading ? 'Adding...' : 'Add to cart'} 
         </button>
       </div>
 

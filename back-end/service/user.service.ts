@@ -42,5 +42,7 @@ const authenticate = async ({ username, password }: UserInput): Promise<Authenti
         role: user.getRole(),
     };
 };
-
-export default { createUser, authenticate, getUserByUsername };
+const getUserById = async (id: number): Promise<User | null> => {
+    return userDB.getUserById(id);
+};
+export default { createUser, authenticate, getUserByUsername, getUserById };

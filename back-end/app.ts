@@ -30,6 +30,9 @@ app.use(
             '/status',
             '/products',
             /^\/products\/.*/,
+            '/shoppingcart',
+            /^\/shoppingcart\/.*/,
+
             // '/reviews'
         ],
     })

@@ -44,14 +44,14 @@ const Header: React.FC = () => {
                     </h1>
                 </Link>
                 <nav className="nav justify-content-center">
-                    <Link href="/products" className="nav-link px-4 fs-5 text-black">
-                        Products
-                    </Link>
-                    <Link href="/cart" className="nav-link px-4 fs-5 text-black">
-                        Cart
-                    </Link>
-                </nav>
-                <div className="relative d-flex align-items-center">
+                              <Link href="/products" className="nav-link px-4 fs-5 text-black">
+                                    Products
+                              </Link>
+                              <Link href="/shoppingcart" className="nav-link px-4 fs-5 text-black">
+                                    Shopping Cart
+                              </Link>
+                        </nav>
+                <div className="relative">
                     {isLoggedIn ? (
                         <div className="relative d-flex align-items-center">
                             <span className="text-black me-3 text-sm">
@@ -70,6 +70,13 @@ const Header: React.FC = () => {
                             </button>
                             {dropdownVisible && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                                    <Link
+                                        href="/profile"
+                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                                    >
+                                        Profile
+                                    </Link>
+                                    
                                     <Link
                                         href="/"
                                         onClick={handleLogout}

@@ -15,8 +15,14 @@ export type Product = {
 
 export type User = {
     id?: number;
-    username: string;
-    password: string;
-    email: string;
-    role: string;
+    username?: string;
+    password?: string;
+    email?: string;
+    role?: string;
+};
+
+export type ShoppingCart = {
+    id?: number;
+    products?: Product[];
+    totalPrice?: number;
 };
