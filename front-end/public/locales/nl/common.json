@@ -1,0 +1,13 @@
+{
+    "shoppingCart": {
+        "title": "Winkelwagen",
+        "orderSummary": "Bestellingsoverzicht",
+        "subtotal": "Subtotaal",
+        "shipping": "Verzending",
+        "total": "Totaal",
+        "checkoutButton": "Afrekenen",
+        "productRemoved": "Product succesvol verwijderd.",
+        "checkoutSuccess": "Afrekenen succesvol! Uw winkelwagen is geleegd.",
+        "checkoutError": "Er is een fout opgetreden tijdens het afrekenen. Probeer het opnieuw."
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "shoppingCart": {
+  "shoppingCart": {
       "title": "Shopping Cart",
       "orderSummary": "Order Summary",
       "subtotal": "Subtotal",
@@ -9,6 +9,5 @@
       "productRemoved": "Product removed successfully.",
       "checkoutSuccess": "Checkout successful! Your cart has been cleared.",
       "checkoutError": "An error occurred while checking out. Please try again."
-    }
   }
-  
+}

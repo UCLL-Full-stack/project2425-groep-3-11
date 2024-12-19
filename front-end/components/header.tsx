@@ -8,30 +8,28 @@ const Header: React.FC = () => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
     useEffect(() => {
-        // Get properties from session storage
-        const storedUsername = sessionStorage.getItem('username');
-        const storedRole = sessionStorage.getItem('role');
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
 
-        // Check if user is logged in based on stored data
-        if (storedUsername && storedRole) {
-            setIsLoggedIn(true);
-            setUserName(storedUsername);
+        if (loggedInUser) {
+            const user = JSON.parse(loggedInUser);
+
+            if (user.username && user.role) {
+                setIsLoggedIn(true);
+                setUserName(user.username);
+            }
         }
     }, []);
 
     const handleLogout = () => {
-        // Clear session storage on logout
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('role');
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('loggedInUser');
         setIsLoggedIn(false);
         setUserName('');
     };
-
     const toggleDropdown = () => {
         setDropdownVisible(!dropdownVisible);
     };
 
+    console.log('username', userName);
     return (
         <header className="p-3 mb-3 border-b bg-white">
             <div className="d-flex justify-content-between align-items-center mb-2 mb-lg-0">
@@ -44,13 +42,13 @@ const Header: React.FC = () => {
                     </h1>
                 </Link>
                 <nav className="nav justify-content-center">
-                              <Link href="/products" className="nav-link px-4 fs-5 text-black">
-                                    Products
-                              </Link>
-                              <Link href="/shoppingcart" className="nav-link px-4 fs-5 text-black">
-                                    Shopping Cart
-                              </Link>
-                        </nav>
+                    <Link href="/products" className="nav-link px-4 fs-5 text-black">
+                        Products
+                    </Link>
+                    <Link href="/shoppingcart" className="nav-link px-4 fs-5 text-black">
+                        Shopping Cart
+                    </Link>
+                </nav>
                 <div className="relative">
                     {isLoggedIn ? (
                         <div className="relative d-flex align-items-center">
@@ -76,7 +74,7 @@ const Header: React.FC = () => {
                                     >
                                         Profile
                                     </Link>
-                                    
+
                                     <Link
                                         href="/"
                                         onClick={handleLogout}
