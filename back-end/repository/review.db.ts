@@ -3,21 +3,28 @@ import { Review } from '../model/review';
 
 const prisma = new PrismaClient();
 
-const createReviewForProduct = async (productId: number, reviewData: Review): Promise<Review> => {
+const createReviewForProduct = async (
+    productId: number,
+    reviewData: Review,
+    userId: number
+): Promise<Review> => {
     try {
         const product = await prisma.product.findUnique({ where: { id: productId } });
 
         if (!product) {
             throw new Error('Product not found');
         }
-
+        if (!(reviewData instanceof Review)) {
+            reviewData = new Review(reviewData);
+        }
+        console.log('reviewData', reviewData);
         const review = await prisma.review.create({
             data: {
                 score: reviewData.getScore(),
                 comment: reviewData.getComment(),
                 date: reviewData.getDate(),
                 product: { connect: { id: productId } },
-                user: { connect: { id: reviewData.getUser().getId() } },
+                user: { connect: { id: userId } },
             },
             include: {
                 product: true,

@@ -1,11 +1,11 @@
 import { Review } from '@types';
 
-const addReviewToProduct = async (productId: String, reviewData: Review) => {
+const addReviewToProduct = async (productId: String, reviewData: Review, userId: string) => {
     try {
         const loggedInUser = sessionStorage.getItem('loggedInUser');
         const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/reviews/review/${productId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/reviews/review/${productId}/${userId}`,
             {
                 method: 'POST',
                 headers: {

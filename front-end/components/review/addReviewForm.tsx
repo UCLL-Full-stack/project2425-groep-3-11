@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Review } from '@types';
 import ReviewService from '@services/ReviewService';
+import UserService from '@services/UserService';
 
 interface ReviewFormProps {
   productId: number; 
@@ -22,9 +23,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onAddReview }) => {
       comment,
       date: new Date(),
     };
-
+    const loggedInUserString = sessionStorage.getItem('loggedInUser');
+    const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
+    const user = await UserService.getUserByUsername(parsedLoggedInUser.username);
+    console.log("User:", user);
     try {
-      await ReviewService.addReviewToProduct(productId.toString(), newReview);
+      await ReviewService.addReviewToProduct(productId.toString(), newReview, user.id);
       onAddReview({ review: newReview, productId });
       setFeedbackMessage('Review submitted successfully!');
     } catch (error) {
