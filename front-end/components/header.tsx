@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Language from './language/language';
 
 const Header: React.FC = () => {
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userName, setUserName] = useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -33,25 +33,25 @@ const Header: React.FC = () => {
     };
 
     return (
-            <header className="p-3 mb-3 border-b bg-white">
-                  <div className="d-flex justify-content-between align-items-center mb-2 mb-lg-0">
-                        <Link href="/" className="nav-link px-4 fs-5 text-black">
+        <header className="p-3 mb-3 border-b bg-white">
+            <div className="d-flex justify-content-between align-items-center mb-2 mb-lg-0">
+                <Link href="/" className="nav-link px-4 fs-5 text-black">
                     <h1
                         className="fs-2 text-black cursor-pointer"
                         style={{ fontFamily: 'Prata, serif' }}
                     >
                         StuffStore
                     </h1>
-                        </Link>
+                </Link>
                 <nav className="nav justify-content-center">
-                              <Link href="/products" className="nav-link px-4 fs-5 text-black">
-                                    Products
-                              </Link>
+                    <Link href="/products" className="nav-link px-4 fs-5 text-black">
+                        Products
+                    </Link>
                     <Link href="/cart" className="nav-link px-4 fs-5 text-black">
                         Cart
                     </Link>
-                        </nav>
-                      <div className="relative d-flex align-items-center">
+                </nav>
+                <div className="relative d-flex align-items-center">
                     {isLoggedIn ? (
                         <div className="relative d-flex align-items-center">
                             <span className="text-black me-3 text-sm">
@@ -91,8 +91,8 @@ const Header: React.FC = () => {
                 </div>
                 <Language />
             </div>
-            </header>
-      );
+        </header>
+    );
 };
 
 export default Header;
