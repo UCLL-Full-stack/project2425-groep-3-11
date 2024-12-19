@@ -38,4 +38,45 @@ shoppingcartRouter.get(
         }
     }
 );
+
+shoppingcartRouter.post(
+    '/:cartId/product/:productId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const shoppingcart = await shoppingcartService.addProductToCart(
+                parseInt(req.params.cartId),
+                parseInt(req.params.productId)
+            );
+            res.status(200).json(shoppingcart);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+shoppingcartRouter.delete(
+    '/:cartId/product/:productId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const shoppingcart = await shoppingcartService.removeProductFromCart(
+                parseInt(req.params.cartId),
+                parseInt(req.params.productId)
+            );
+            res.status(200).json(shoppingcart);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+shoppingcartRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const shoppingcart = await shoppingcartService.clearShoppingCart({
+            id: parseInt(req.params.id),
+        });
+        res.status(200).json(shoppingcart);
+    } catch (error) {
+        next(error);
+    }
+});
 export { shoppingcartRouter };

@@ -33,10 +33,49 @@ const getShoppingCartByUsername = (username: string) => {
     });
 };
 
+const addProductToCart = (cartId: number, productId: number) => {
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/shoppingcart/${cartId}/product/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const removeProductFromCart = (cartId: number, productId: number) => {
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/shoppingcart/${cartId}/product/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const clearShoppingCart = (id: number) => {
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/shoppingcart/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const ShoppingCartService = {
     getShoppingCartById,
     getShoppingCartByUserId,
     getShoppingCartByUsername,
+    addProductToCart,
+    removeProductFromCart,
+    clearShoppingCart,
 };
 
 export default ShoppingCartService;
