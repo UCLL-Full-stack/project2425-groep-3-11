@@ -1,6 +1,7 @@
 import ShoppingCartService from "@services/ShoppingCartService";
 import { Product, ShoppingCart } from "@types";
 import Head from "next/head";
+import router from "next/router";
 import { useEffect, useState } from "react";
 
 interface ProductWithQuantity extends Product {
@@ -11,6 +12,9 @@ const ShoppingCartOverview = () => {
     const [shoppingcart, setShoppingcart] = useState<ShoppingCart | null>(null);
     const [productsWithQuantity, setProductsWithQuantity] = useState<ProductWithQuantity[]>([]);
     const [loggedInUser, setLoggedInUser] = useState<String | null>(null);
+
+    const loggedInUserString = sessionStorage.getItem('loggedInUser');
+    const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("loggedInUser");
@@ -63,7 +67,39 @@ const ShoppingCartOverview = () => {
             console.error("Failed to fetch shopping cart:", error);
         }
     };
+    const handleCheckout = async () => {
+        const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
+        const shoppingcart = await shoppingCartResponse.json();
+        if (shoppingcart) {
+            try {
+                if (shoppingcart.id !== undefined) {
+                    await ShoppingCartService.clearShoppingCart(shoppingcart.id);
+                } else {
+                    console.error("Shopping cart ID is undefined.");
+                }
+                alert("Checkout successful! Your cart has been cleared.");
+                router.push("/"); // Redirect to the home page
+            } catch (error) {
+                console.error("Failed to clear shopping cart:", error);
+                alert("An error occurred while checking out. Please try again.");
+            }
+        }
+    };
 
+    const removeProductFromCart = async (productId: number) => {
+        const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
+        const shoppingcart = await shoppingCartResponse.json();
+        if (shoppingcart && shoppingcart.id) {
+            try {
+                await ShoppingCartService.removeProductFromCart(shoppingcart.id, productId);
+                alert("Product removed successfully.");
+                fetchShoppingCart(); // Fetch the updated shopping cart after removal
+            } catch (error) {
+                console.error("Failed to remove product:", error);
+                alert("An error occurred while removing the product. Please try again.");
+            }
+        }
+    };
     useEffect(() => {
         if (loggedInUser) {
             fetchShoppingCart();
@@ -82,7 +118,13 @@ const ShoppingCartOverview = () => {
                     
                     <div className="cart-items lg:col-span-2">
                         {productsWithQuantity.map((product) => (
-                            <div key={product.id} className="cart-item flex items-center justify-between p-4 mb-4 bg-gray-100 rounded-lg shadow-sm">
+                            <div key={product.id} className="cart-item flex items-center justify-between p-4 mb-4 bg-gray-100 rounded-lg shadow-sm relative">
+                                <button
+                                    onClick={() => product.id !== undefined && removeProductFromCart(product.id)}
+                                    className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                                >
+                                    &#10005; {/* Cross icon */}
+                                </button>
                                 <div className="item-details">
                                     <h2 className="font-semibold">{product.name}</h2>
                                     <p className="text-gray-600">pcs: {product.quantity}</p>
@@ -109,7 +151,7 @@ const ShoppingCartOverview = () => {
                                 </span>
                             </li>
                         </ul>
-                        <button className="checkout-btn bg-black text-white px-4 py-2 mt-4 w-full rounded">Checkout</button>
+                        <button className="checkout-btn bg-black text-white px-4 py-2 mt-4 w-full rounded" onClick={handleCheckout}>Checkout</button>
                     </div>
                 </div>
     </div>
