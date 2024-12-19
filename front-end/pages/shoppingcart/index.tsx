@@ -1,5 +1,10 @@
+import ShoppingCartService from "@services/ShoppingCartService";
+import { Product, ShoppingCart } from "@types";
 import Head from "next/head";
-import ProductsOverview from "@components/product/productsOverview";
+import router from "next/router";
+import { useEffect, useState } from "react";
+import QuantityDropdown from "@components/quantityDropdown";
+import useSWR from "swr";
 import Header from "@components/header";
 import ShoppingCartOverview from "@components/shoppingcart/shoppingCartOverview";
 

@@ -6,9 +6,10 @@ type Props = {
     productId: number;
     quantity: number;
     stock: number;  
+    onQuantityChange: () => void;
 }
 
-const QuantityDropdown = ({ cartId, productId, quantity, stock }: Props) => {
+const QuantityDropdown = ({ cartId, productId, quantity, stock, onQuantityChange }: Props) => {
 
     const [selectedQuantity, setSelectedQuantity] = useState<number>(quantity);
 
@@ -19,6 +20,7 @@ const QuantityDropdown = ({ cartId, productId, quantity, stock }: Props) => {
     const handleQuantityChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newQuantity = parseInt(event.target.value, 10);
         setSelectedQuantity(newQuantity);
+        onQuantityChange();
 
         try {
             await ShoppingCartService.changeProductQuantity(cartId, productId, newQuantity);

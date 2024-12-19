@@ -92,7 +92,7 @@ const ShoppingCartOverview = () => {
             }
         }
     };
-    const {data, isLoading, error} = useSWR("shoppingcart", fetchShoppingCart);
+    // const {data, isLoading, error} = useSWR("shoppingcart", fetchShoppingCart);
     useEffect(() => {
         if (loggedInUser) {
             fetchShoppingCart();
@@ -100,7 +100,9 @@ const ShoppingCartOverview = () => {
         
     }, [loggedInUser]);
 
-
+    const refreshShoppingCart = () => {
+        fetchShoppingCart();
+    }
     return (
         <div className="shopping-cart-container">
             
@@ -126,6 +128,7 @@ const ShoppingCartOverview = () => {
                                                 productId={product.id}   
                                                 quantity={product.quantity}  
                                                 stock={product.stock} 
+                                                onQuantityChange={refreshShoppingCart}
                                             />)}
                                 </div>
                                 <span className="item-price text-lg font-semibold">€{(product.price * product.quantity).toFixed(2)}</span>
