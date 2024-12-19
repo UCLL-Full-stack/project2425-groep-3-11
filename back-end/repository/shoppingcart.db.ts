@@ -21,7 +21,47 @@ const getShoppingCartById = async ({ id }: { id: number }): Promise<Shoppingcart
     }
 };
 
+const getShoppingCartByUserId = async ({
+    userId,
+}: {
+    userId: number;
+}): Promise<Shoppingcart | null> => {
+    try {
+        const shoppingCart = await prisma.shoppingCart.findFirst({
+            where: { userId },
+            include: { products: true },
+        });
 
+        if (!shoppingCart) {
+            return null;
+        }
+
+        return Shoppingcart.from(shoppingCart);
+    } catch (error) {
+        throw new Error('Failed to fetch shopping cart: ' + (error as Error).message);
+    }
+};
+
+const getShoppingCartByUsername = async ({
+    username,
+}: {
+    username: string;
+}): Promise<Shoppingcart | null> => {
+    try {
+        const shoppingCart = await prisma.shoppingCart.findFirst({
+            where: { user: { username } },
+            include: { products: true },
+        });
+
+        if (!shoppingCart) {
+            return null;
+        }
+
+        return Shoppingcart.from(shoppingCart);
+    } catch (error) {
+        throw new Error('Failed to fetch shopping cart: ' + (error as Error).message);
+    }
+};
 // Add a product to the shopping cart
 const addProductToCart = async (cartId: number, productId: number): Promise<Shoppingcart> => {
     try {
@@ -96,4 +136,6 @@ export default {
     removeProductFromCart,
     clearShoppingCart,
     deleteShoppingCart,
+    getShoppingCartByUserId,
+    getShoppingCartByUsername,
 };

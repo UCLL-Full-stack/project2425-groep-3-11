@@ -41,6 +41,9 @@ const Header: React.FC = () => {
                               <Link href="/products" className="nav-link px-4 fs-5 text-black">
                                     Products
                               </Link>
+                              <Link href="/shoppingcart" className="nav-link px-4 fs-5 text-black">
+                                    Shopping Cart
+                              </Link>
                         </nav>
                 <div className="relative">
                     {isLoggedIn ? (
@@ -59,6 +62,7 @@ const Header: React.FC = () => {
                                     >
                                         Profile
                                     </Link>
+                                    
                                     <Link
                                         href="/"
                                         onClick={handleLogout}
