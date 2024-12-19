@@ -3,6 +3,8 @@ import { Product, ShoppingCart } from "@types";
 import Head from "next/head";
 import router from "next/router";
 import { useEffect, useState } from "react";
+import QuantityDropdown from "@components/quantityDropdown";
+import useSWR from "swr";
 
 interface ProductWithQuantity extends Product {
     quantity: number;
@@ -13,25 +15,20 @@ const ShoppingCartOverview = () => {
     const [productsWithQuantity, setProductsWithQuantity] = useState<ProductWithQuantity[]>([]);
     const [loggedInUser, setLoggedInUser] = useState<String | null>(null);
 
-    const loggedInUserString = sessionStorage.getItem('loggedInUser');
-    const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
 
-  useEffect(() => {
-    const storedUser = sessionStorage.getItem("loggedInUser");
-    if (storedUser) {
-      try {
-        setLoggedInUser(JSON.parse(storedUser));
-        console.log("logged in user:", loggedInUser)
-      } catch (error) {
-        console.error("Error parsing user data from localStorage:", error);
-        setLoggedInUser(null);
-      }
-    }
-  }, []);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {  
+            const loggedInUserString = sessionStorage.getItem('loggedInUser');
+            const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
+            setLoggedInUser(parsedLoggedInUser);
+            console.log("parsedLoggedInUser:", parsedLoggedInUser);
+        }
+    }, []);
 
     const fetchShoppingCart = async () => {
         try {
-            console.log("logged in user:", loggedInUser) // Parse and set the user
+            console.log("logged in user:", loggedInUser) 
             const loggedInUserString = sessionStorage.getItem('loggedInUser');
             if (!loggedInUser) {
                 console.error("No user is logged in.");
@@ -46,21 +43,12 @@ const ShoppingCartOverview = () => {
                 setShoppingcart(shoppingCartData);
 
                 
-                const productQuantityMap = shoppingCartData.products.reduce(
-                    (acc: Record<number, ProductWithQuantity>, product: Product) => {
-                        if (product.id !== undefined && acc[product.id]) {
-                            acc[product.id].quantity += 1; 
-                        } else {
-                            if (product.id !== undefined) {
-                                acc[product.id] = { ...product, quantity: 1 }; 
-                            }
-                        }
-                        return acc;
-                    },
-                    {}
-                );
+            const productsWithUpdatedQuantity = shoppingCartData.products.map((product: ProductWithQuantity) => ({
+                ...product, 
+                quantity: product.quantity || 1, 
+            }));
 
-                setProductsWithQuantity(Object.values(productQuantityMap));
+                setProductsWithQuantity(productsWithUpdatedQuantity);
             }
             console.log("Shopping cart:", shoppingCartData);
         } catch (error) {
@@ -68,6 +56,8 @@ const ShoppingCartOverview = () => {
         }
     };
     const handleCheckout = async () => {
+        const loggedInUserString = sessionStorage.getItem('loggedInUser');
+        const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
         const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
         const shoppingcart = await shoppingCartResponse.json();
         if (shoppingcart) {
@@ -87,6 +77,8 @@ const ShoppingCartOverview = () => {
     };
 
     const removeProductFromCart = async (productId: number) => {
+        const loggedInUserString = sessionStorage.getItem('loggedInUser');
+        const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
         const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
         const shoppingcart = await shoppingCartResponse.json();
         if (shoppingcart && shoppingcart.id) {
@@ -100,10 +92,12 @@ const ShoppingCartOverview = () => {
             }
         }
     };
+    const {data, isLoading, error} = useSWR("shoppingcart", fetchShoppingCart);
     useEffect(() => {
         if (loggedInUser) {
             fetchShoppingCart();
         }
+        
     }, [loggedInUser]);
 
 
@@ -121,15 +115,20 @@ const ShoppingCartOverview = () => {
                             <div key={product.id} className="cart-item flex items-center justify-between p-4 mb-4 bg-gray-100 rounded-lg shadow-sm relative">
                                 <button
                                     onClick={() => product.id !== undefined && removeProductFromCart(product.id)}
-                                    className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                                    className="absolute top-2 right-2 text-gray-700 hover:text-red-600"
                                 >
-                                    &#10005; {/* Cross icon */}
+                                    &#10005; {/* kruis icoon */}
                                 </button>
                                 <div className="item-details">
                                     <h2 className="font-semibold">{product.name}</h2>
-                                    <p className="text-gray-600">pcs: {product.quantity}</p>
+                                    {shoppingcart.id && product.id &&(<QuantityDropdown
+                                                cartId={shoppingcart.id}  
+                                                productId={product.id}   
+                                                quantity={product.quantity}  
+                                                stock={product.stock} 
+                                            />)}
                                 </div>
-                                <span className="item-price text-lg font-semibold">€{product.price.toFixed(2)}</span>
+                                <span className="item-price text-lg font-semibold">€{(product.price * product.quantity).toFixed(2)}</span>
                             </div>
                         ))}
                     </div>

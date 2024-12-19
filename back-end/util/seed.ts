@@ -25,6 +25,7 @@ const main = async () => {
             description:
                 'A toy train from the ABD company suitable for children aged 5-12 years old.',
             stock: 10,
+            quantity: 1,
         },
     });
 
@@ -34,6 +35,7 @@ const main = async () => {
             price: 199.99,
             description: 'A sleek smartwatch with heart-rate monitoring and GPS tracking',
             stock: 15,
+            quantity: 1,
         },
     });
 
@@ -43,6 +45,7 @@ const main = async () => {
             price: 49.99,
             description: 'A durable backpack with multiple compartments and waterproof material',
             stock: 25,
+            quantity: 1,
         },
     });
 

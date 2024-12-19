@@ -130,6 +130,32 @@ const deleteShoppingCart = async (cartId: number): Promise<void> => {
     }
 };
 
+const changeProductQuantity = async (
+    cartId: number,
+    productId: number,
+    quantity: number
+): Promise<Shoppingcart> => {
+    try {
+        const updatedCart = await prisma.shoppingCart.update({
+            where: { id: cartId },
+            data: {
+                products: {
+                    update: {
+                        where: { id: productId },
+                        data: {
+                            quantity,
+                        },
+                    },
+                },
+            },
+            include: { products: true },
+        });
+
+        return Shoppingcart.from(updatedCart);
+    } catch (error) {
+        throw new Error('Failed to change product quantity: ' + (error as Error).message);
+    }
+};
 export default {
     getShoppingCartById,
     addProductToCart,
@@ -138,4 +164,5 @@ export default {
     deleteShoppingCart,
     getShoppingCartByUserId,
     getShoppingCartByUsername,
+    changeProductQuantity,
 };
