@@ -24,7 +24,7 @@ const getShoppingCartByUserId = (userId: number) => {
 const getShoppingCartByUsername = (username: string) => {
     const loggedInUser = sessionStorage.getItem('loggedInUser');
     const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
-    return fetch(process.env.NEXT_PUBLIC_API_URL + `/shoppingcart/user/${username}`, {
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/shoppingcart/username/${username}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

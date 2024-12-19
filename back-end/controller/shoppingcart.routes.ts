@@ -26,7 +26,7 @@ shoppingcartRouter.get('/user/:userId', async (req: Request, res: Response, next
 });
 
 shoppingcartRouter.get(
-    '/user/:username',
+    '/username/:username',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const shoppingcart = await shoppingcartService.getShoppingCartByUsername({

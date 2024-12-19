@@ -28,12 +28,15 @@ const ShoppingCartOverview = () => {
     const fetchShoppingCart = async () => {
         try {
             console.log("logged in user:", loggedInUser) // Parse and set the user
-
+            const loggedInUserString = sessionStorage.getItem('loggedInUser');
             if (!loggedInUser) {
                 console.error("No user is logged in.");
                 return;
             }
-            const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername("milan");
+            
+            const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
+            const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
+            console.log("Parsed logged in user:", parsedLoggedInUser);
             const shoppingCartData = await shoppingCartResponse.json();
             if (shoppingCartData) {
                 setShoppingcart(shoppingCartData);
@@ -62,8 +65,11 @@ const ShoppingCartOverview = () => {
     };
 
     useEffect(() => {
-        fetchShoppingCart();
-    }, []);
+        if (loggedInUser) {
+            fetchShoppingCart();
+        }
+    }, [loggedInUser]);
+
 
     return (
         <div className="shopping-cart-container">
