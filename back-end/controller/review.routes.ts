@@ -17,4 +17,14 @@ reviewRouter.post(
         }
     }
 );
+
+reviewRouter.get('/product/:productId', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const productId = parseInt(req.params.productId);
+        const reviews = await reviewService.getReviewsForProduct(productId);
+        res.status(200).json(reviews);
+    } catch (error) {
+        next(error);
+    }
+});
 export { reviewRouter };

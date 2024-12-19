@@ -37,7 +37,7 @@ const ReadProductById = () => {
       <main className="d-flex flex-column justify-content-center align-items-center">
         <h1>Info about {product ? product.name : "loading..."}</h1>
         {!product && <p>Loading...</p>}
-        <section>
+        <section className="">
           {product && <ProductInfo product={product} />}
           {product && product.id !== undefined && (
             <ReviewForm 

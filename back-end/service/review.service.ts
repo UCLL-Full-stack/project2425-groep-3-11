@@ -11,4 +11,8 @@ const createReviewForProduct = async (
     return reviews;
 };
 
-export default { createReviewForProduct };
+const getReviewsForProduct = async (productId: number): Promise<Review[]> => {
+    const reviews = await reviewDb.getReviewsForProduct(productId);
+    return reviews;
+};
+export default { createReviewForProduct, getReviewsForProduct };

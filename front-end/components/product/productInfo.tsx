@@ -5,6 +5,7 @@ import { Product, ShoppingCart } from '@types';
 import { useEffect, useState } from "react";
 import ProductService from "@services/ProductService";
 import ShoppingCartService from '@services/ShoppingCartService';
+import ReviewService from '@services/ReviewService';
 
 
 interface ProductInfoProps {
@@ -15,10 +16,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const [cartId, setCartId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
   if (!product) return null;
 
   const image = "https://placehold.co/600x400"; 
-  const reviews =  product.reviews ?? [];
+  // const reviews =  product.reviews ?? [];
+  console.log("Product :", product);
   const reviewCount = reviews.length;
 
   const averageRating = reviewCount > 0 
@@ -51,6 +54,21 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
       fetchCart();
     }, []);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!product || !product.id) return;
+
+      const fetchedReviews = await ReviewService.getReviewsForProduct(product.id.toString()); // Assuming product.id is a number, convert to string
+      if (fetchedReviews) {
+        setReviews(fetchedReviews);  // Update state with the fetched reviews
+      } else {
+        setReviews([]); // If no reviews found
+      }
+    };
+
+    fetchReviews();
+  }, [product]);
+
   const addToCart = async () => {
     if (!cartId || !product.id) {
       setMessage('Cart or product not found.');
@@ -75,6 +93,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
       setLoading(false);
     }
   };
+  
   
   return (
     <div className="flex flex-col md:flex-row items-start text-left p-4">
@@ -103,7 +122,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         </span>
       </div>
 
-      <div className="mt-6 w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+      <div className="mt-6 w-full p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-auto max-h-80">
         <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
         {reviewCount > 0 ? (
           <ul className="space-y-2">
@@ -114,7 +133,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                       <FontAwesomeIcon 
                         key={index} 
                         icon={solidStar} 
-                        className={`text-xl ${index < review.score ? 'text-yellow-500' : 'text-gray-300'} ${
+                        className={`text-sm ${index < review.score ? 'text-yellow-500' : 'text-gray-300'} ${
                           index >= review.score ? 'opacity-50' : 'opacity-100'
                         }`}
                       />
