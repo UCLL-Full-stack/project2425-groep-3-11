@@ -112,6 +112,15 @@ const main = async () => {
         },
     });
 
+    await prisma.shoppingCart.create({
+        data: {
+            userId: user3.id,
+            products: {
+                connect: [{ id: smartwatch.id }],
+            },
+        },
+    });
+
     console.log('Database seeded successfully!');
 };
 

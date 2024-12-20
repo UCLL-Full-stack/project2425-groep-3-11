@@ -95,8 +95,8 @@ const Loginform: React.FC = () => {
 
     // Sample data for table
     const users = [
-        { username: 'milan', password: 'milanspassword' },
-        { username: 'admin', password: 'adminspassword' },
+        { username: 'milan', password: 'milanspassword', role: 'user' },
+        { username: 'admin', password: 'adminspassword', role: 'admin' },
     ];
 
     return (
@@ -176,6 +176,7 @@ const Loginform: React.FC = () => {
                         <tr>
                             <th style={styles.tableHeaderCell}>Username</th>
                             <th style={styles.tableHeaderCell}>Password</th>
+                            <th style={styles.tableHeaderCell}>Role</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -183,6 +184,7 @@ const Loginform: React.FC = () => {
                             <tr key={index} style={styles.tableRow}>
                                 <td style={styles.tableCell}>{user.username}</td>
                                 <td style={styles.tableCell}>{user.password}</td>
+                                <td style={styles.tableCell}>{user.role}</td>
                             </tr>
                         ))}
                     </tbody>
