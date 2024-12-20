@@ -75,12 +75,21 @@ const Header: React.FC = () => {
                         {dropdownVisible && (
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
                                 {userRole !== 'guest' && (
-                                    <Link
-                                        href="/profile"
-                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                                    >
-                                        Profile
-                                    </Link>
+                                    <>
+                                        <Link
+                                            href="/profile"
+                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                                        >
+                                            Profile
+                                        </Link>
+                                        {/* Add the new Profile dropdown */}
+                                        <Link
+                                            href="/profile"
+                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                                        >
+                                            Profile Settings
+                                        </Link>
+                                    </>
                                 )}
                                 {userRole === 'guest' ? (
                                     <Link

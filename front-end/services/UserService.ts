@@ -42,9 +42,35 @@ const loginUser = async (user: User) => {
     }
 };
 
+const getAllUsers = async () => {
+    try {
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token ? `Bearer ${token}` : '', 
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to get users: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+
 const UserService = {
     registerUser,
     loginUser,
+    getAllUsers,
 };
 
 export default UserService;
