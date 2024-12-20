@@ -1,17 +1,7 @@
-import ShoppingCartService from "@services/ShoppingCartService";
-import { Product, ShoppingCart } from "@types";
-import Head from "next/head";
-import router from "next/router";
-import { useEffect, useState } from "react";
-import QuantityDropdown from "@components/quantityDropdown";
-import useSWR from "swr";
-import Header from "@components/header";
-import ShoppingCartOverview from "@components/shoppingcart/shoppingCartOverview";
-
 import { useEffect, useState } from 'react';
-import Head from 'next/head';
 import Header from '@components/header';
 import ShoppingCartOverview from '@components/shoppingcart/shoppingCartOverview';
+
 import Link from 'next/link';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSideProps } from 'next';
