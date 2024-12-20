@@ -1,10 +1,11 @@
-import ShoppingCartService from "@services/ShoppingCartService";
-import { Product, ShoppingCart } from "@types";
-import Head from "next/head";
-import router from "next/router";
-import { useEffect, useState } from "react";
-import QuantityDropdown from "@components/quantityDropdown";
-import useSWR from "swr";
+import ShoppingCartService from '@services/ShoppingCartService';
+import { Product, ShoppingCart } from '@types';
+import Head from 'next/head';
+import router from 'next/router';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next';
+import QuantityDropdown from '@components/quantityDropdown';
+import useSWR from 'swr';
 
 interface ProductWithQuantity extends Product {
     quantity: number;
@@ -13,91 +14,80 @@ interface ProductWithQuantity extends Product {
 const ShoppingCartOverview = () => {
     const [shoppingcart, setShoppingcart] = useState<ShoppingCart | null>(null);
     const [productsWithQuantity, setProductsWithQuantity] = useState<ProductWithQuantity[]>([]);
-    const [loggedInUser, setLoggedInUser] = useState<String | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
 
-
+    const { t } = useTranslation();
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {  
+        if (typeof window !== 'undefined') {
             const loggedInUserString = sessionStorage.getItem('loggedInUser');
             const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
             setLoggedInUser(parsedLoggedInUser);
-            console.log("parsedLoggedInUser:", parsedLoggedInUser);
+            console.log('parsedLoggedInUser:', parsedLoggedInUser);
         }
     }, []);
 
     const fetchShoppingCart = async () => {
         try {
-            console.log("logged in user:", loggedInUser) 
-            const loggedInUserString = sessionStorage.getItem('loggedInUser');
             if (!loggedInUser) {
-                console.error("No user is logged in.");
+                console.error('No user is logged in.');
                 return;
             }
-            
+            const loggedInUserString = sessionStorage.getItem('loggedInUser');
             const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
-            const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
-            console.log("Parsed logged in user:", parsedLoggedInUser);
+            const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(
+                parsedLoggedInUser.username
+            );
             const shoppingCartData = await shoppingCartResponse.json();
             if (shoppingCartData) {
                 setShoppingcart(shoppingCartData);
-
-                
-            const productsWithUpdatedQuantity = shoppingCartData.products.map((product: ProductWithQuantity) => ({
-                ...product, 
-                quantity: product.quantity || 1, 
-            }));
-
+                const productsWithUpdatedQuantity = shoppingCartData.products.map(
+                    (product: ProductWithQuantity) => ({
+                        ...product,
+                        quantity: product.quantity || 1,
+                    })
+                );
                 setProductsWithQuantity(productsWithUpdatedQuantity);
             }
-            console.log("Shopping cart:", shoppingCartData);
         } catch (error) {
-            console.error("Failed to fetch shopping cart:", error);
+            console.error(t('shoppingCart.fetchError'), error);
         }
     };
+
     const handleCheckout = async () => {
-        const loggedInUserString = sessionStorage.getItem('loggedInUser');
-        const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
-        const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
-        const shoppingcart = await shoppingCartResponse.json();
-        if (shoppingcart) {
-            try {
-                if (shoppingcart.id !== undefined) {
-                    await ShoppingCartService.clearShoppingCart(shoppingcart.id);
-                } else {
-                    console.error("Shopping cart ID is undefined.");
-                }
-                alert("Checkout successful! Your cart has been cleared.");
-                router.push("/"); // Redirect to the home page
-            } catch (error) {
-                console.error("Failed to clear shopping cart:", error);
-                alert("An error occurred while checking out. Please try again.");
+        try {
+            if (shoppingcart?.id) {
+                await ShoppingCartService.clearShoppingCart(shoppingcart.id);
+                alert(t('shoppingCart.checkoutSuccess'));
+                router.push('/');
+            } else {
+                console.error(t('shoppingCart.checkoutError'));
             }
+        } catch (error) {
+            console.error(t('shoppingCart.checkoutError'), error);
+            alert(t('shoppingCart.tryAgain'));
         }
     };
 
     const removeProductFromCart = async (productId: number) => {
-        const loggedInUserString = sessionStorage.getItem('loggedInUser');
-        const parsedLoggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
-        const shoppingCartResponse = await ShoppingCartService.getShoppingCartByUsername(parsedLoggedInUser.username);
-        const shoppingcart = await shoppingCartResponse.json();
-        if (shoppingcart && shoppingcart.id) {
-            try {
+        try {
+            if (shoppingcart?.id) {
                 await ShoppingCartService.removeProductFromCart(shoppingcart.id, productId);
-                alert("Product removed successfully.");
-                fetchShoppingCart(); // Fetch the updated shopping cart after removal
-            } catch (error) {
-                console.error("Failed to remove product:", error);
-                alert("An error occurred while removing the product. Please try again.");
+                alert(t('shoppingCart.productRemoved'));
+                fetchShoppingCart();
             }
+        } catch (error) {
+            console.error(t('shoppingCart.removeError'), error);
+            alert(t('shoppingCart.tryAgain'));
         }
     };
+
+
     // const {data, isLoading, error} = useSWR("shoppingcart", fetchShoppingCart);
     useEffect(() => {
         if (loggedInUser) {
             fetchShoppingCart();
         }
-        
     }, [loggedInUser]);
 
     const refreshShoppingCart = () => {
@@ -105,7 +95,6 @@ const ShoppingCartOverview = () => {
     }
     return (
         <div className="shopping-cart-container">
-            
             {shoppingcart && (
         <div className="flex justify-center px-4">
             <div className="max-w-5xl w-full">
