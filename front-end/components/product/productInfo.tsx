@@ -7,7 +7,6 @@ import ProductService from "@services/ProductService";
 import ShoppingCartService from '@services/ShoppingCartService';
 import ReviewService from '@services/ReviewService';
 
-
 interface ProductInfoProps {
   product: Product | null;
 }
@@ -17,11 +16,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
   if (!product) return null;
 
   const image = "https://placehold.co/600x400"; 
-  // const reviews =  product.reviews ?? [];
-  console.log("Product :", product);
+
   const reviewCount = reviews.length;
 
   const averageRating = reviewCount > 0 
@@ -29,36 +29,45 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     : 2;
 
   useEffect(() => {
-      const fetchCart = async () => {
-        const loggedInUser = sessionStorage.getItem('loggedInUser');
-        if (!loggedInUser) {
-          setMessage('No user logged in.');
-          return;
-        }
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
 
+    if (loggedInUser) {
         const user = JSON.parse(loggedInUser);
-        try {
-          const response = await ShoppingCartService.getShoppingCartByUsername(user.username);
-          if (response.ok) {
-            const data = await response.json();
-            setCartId(data.id);
-          } else {
-            setMessage('Failed to fetch shopping cart.');
-          }
-        } catch (error) {
-          console.error('Error fetching shopping cart:', error);
-          setMessage('Error fetching shopping cart.');
-        }
-      };
+        setUserRole(user.role || 'guest');
+    } else {
+        setUserRole(null);
+    }
 
-      fetchCart();
-    }, []);
+    const fetchCart = async () => {
+      const loggedInUser = sessionStorage.getItem('loggedInUser');
+      if (!loggedInUser) {
+        setMessage('No user logged in.');
+        return;
+      }
+
+      const user = JSON.parse(loggedInUser);
+      try {
+        const response = await ShoppingCartService.getShoppingCartByUsername(user.username);
+        if (response.ok) {
+          const data = await response.json();
+          setCartId(data.id);
+        } else {
+          setMessage('Failed to fetch shopping cart.');
+        }
+      } catch (error) {
+        console.error('Error fetching shopping cart:', error);
+        setMessage('Error fetching shopping cart.');
+      }
+    };
+
+    fetchCart();
+  }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
       if (!product || !product.id) return;
 
-      const fetchedReviews = await ReviewService.getReviewsForProduct(product.id.toString()); // Assuming product.id is a number, convert to string
+      const fetchedReviews = await ReviewService.getReviewsForProduct(product.id.toString()); 
       if (fetchedReviews) {
         setReviews(fetchedReviews);  
       } else {
@@ -78,7 +87,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     setLoading(true);
     setMessage(null);
     try {
-      
       const response = await ShoppingCartService.addProductToCart(cartId, product.id);
       if (response.ok) {
         setMessage('Product added to cart successfully.');
@@ -94,56 +102,57 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     }
   };
   
-  
   return (
     <> 
-    <div className="flex flex-col md:flex-row items-start text-left p-4">
-      <div className='gird grid-cols-1'>
-      <img src={image} alt={product.name} className="w-70 h-70 rounded-lg mb-4 md:mb-0 md:mr-6" />
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-xl font-semibold">{product.name}</h2>
-        <p className="text-gray-700">{product.description}</p>
-        <p className="text-lg font-medium text-gray-800">€{product.price.toFixed(2)}</p>
-        
-        <button 
-          onClick={addToCart} 
-          className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 disabled:bg-gray-400"
-          disabled={loading}
-        >
-            {loading ? 'Adding...' : 'Add to cart'} 
-        </button>
-      </div>
-      </div>
+      <div className="flex flex-col md:flex-row items-start text-left p-4">
+        <div className='gird grid-cols-1'>
+          <img src={image} alt={product.name} className="w-70 h-70 rounded-lg mb-4 md:mb-0 md:mr-6" />
+          <div className="flex flex-col space-y-2">
+            <h2 className="text-xl font-semibold">{product.name}</h2>
+            <p className="text-gray-700">{product.description}</p>
+            <p className="text-lg font-medium text-gray-800">€{product.price.toFixed(2)}</p>
 
-      <div className="flex flex-col items-center mt-4 md:ml-6 m-4">
-        <div className="mb-1">
-          <span className="text-lg font-semibold">{averageRating.toFixed(1)} / 5</span>
+            {/* Only show "Add to cart" button if the user is logged in and has a valid role */}
+            {userRole && userRole !== 'guest' && userRole !== null && userRole !== undefined && (
+              <button 
+                onClick={addToCart} 
+                className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 disabled:bg-gray-400"
+                disabled={loading}
+              >
+                {loading ? 'Adding...' : 'Add to cart'} 
+              </button>
+            )}
+          </div>
         </div>
-        <span className="text-sm text-gray-500">
-          Based on {reviewCount} review{reviewCount !== 1 && 's'}
-        </span>
-      </div>
 
-      <div className="mt-6 w-full p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-auto max-h-80">
-        <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
-        {reviewCount > 0 ? (
-          <ul className="space-y-2">
-            {reviews.map(review => (
-              <li key={review.id} className="border-b pb-2">
+        <div className="flex flex-col items-center mt-4 md:ml-6 m-4">
+          <div className="mb-1">
+            <span className="text-lg font-semibold">{averageRating.toFixed(1)} / 5</span>
+          </div>
+          <span className="text-sm text-gray-500">
+            Based on {reviewCount} review{reviewCount !== 1 && 's'}
+          </span>
+        </div>
+
+        <div className="mt-6 w-full p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-auto max-h-80">
+          <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
+          {reviewCount > 0 ? (
+            <ul className="space-y-2">
+              {reviews.map(review => (
+                <li key={review.id} className="border-b pb-2">
                   <div className="flex items-center mb-1">
-
                     <span className="text-m font-bold text-gray-500 ml-2"> {review.score}/5 </span>
                     <span className="text-sm text-gray-500 ml-2">{new Date(review.date).toLocaleDateString()}</span>
                   </div>
-                <p className="text-gray-700">{review.comment}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No reviews yet.</p>
-        )}
+                  <p className="text-gray-700">{review.comment}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No reviews yet.</p>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };
