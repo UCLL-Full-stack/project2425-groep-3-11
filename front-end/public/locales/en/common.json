@@ -1,13 +1,16 @@
 {
   "shoppingCart": {
-      "title": "Shopping Cart",
-      "orderSummary": "Order Summary",
-      "subtotal": "Subtotal",
-      "shipping": "Shipping",
-      "total": "Total",
-      "checkoutButton": "Checkout",
-      "productRemoved": "Product removed successfully.",
-      "checkoutSuccess": "Checkout successful! Your cart has been cleared.",
-      "checkoutError": "An error occurred while checking out. Please try again."
+    "fetchError": "An error occurred while fetching the shopping cart.",
+    "checkoutSuccess": "The order was successfully placed.",
+    "checkoutError": "An error occurred during checkout.",
+    "productRemoved": "The product has been removed from the cart.",
+    "removeError": "An error occurred while removing the product.",
+    "tryAgain": "Please try again.",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Checkout",
+    "title": "Shopping Cart"
+
   }
 }

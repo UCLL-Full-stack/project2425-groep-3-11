@@ -1,13 +1,16 @@
 {
     "shoppingCart": {
-        "title": "Winkelwagen",
-        "orderSummary": "Bestellingsoverzicht",
-        "subtotal": "Subtotaal",
-        "shipping": "Verzending",
-        "total": "Totaal",
-        "checkoutButton": "Afrekenen",
-        "productRemoved": "Product succesvol verwijderd.",
-        "checkoutSuccess": "Afrekenen succesvol! Uw winkelwagen is geleegd.",
-        "checkoutError": "Er is een fout opgetreden tijdens het afrekenen. Probeer het opnieuw."
+      "fetchError": "Er is een fout opgetreden bij het ophalen van het winkelwagentje.",
+      "checkoutSuccess": "De bestelling is succesvol geplaatst.",
+      "checkoutError": "Er is een fout opgetreden bij het afrekenen.",
+      "productRemoved": "Het product is uit het winkelwagentje verwijderd.",
+      "removeError": "Er is een fout opgetreden bij het verwijderen van het product.",
+      "tryAgain": "Probeer het opnieuw.",
+      "subtotal": "Subtotaal",
+      "shipping": "Verzending",
+      "total": "Totaal",
+      "checkout": "Afrekenen",
+      "title": "Winkelwagen"
     }
-}
+  }
+  
