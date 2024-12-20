@@ -32,6 +32,6 @@ type AuthenticationResponse = {
     username: string;
     role: string;
 };
-type Role = 'admin' | 'student' | 'lecturer' | 'guest';
+type Role = 'admin' | 'user' | 'lecturer' | 'guest';
 
 export { UserInput, ReviewInput, ProductInput, ShoppingCartInput, Role, AuthenticationResponse };
