@@ -49,8 +49,11 @@ const getUsers = async ({ username, role }: UserInput): Promise<User[]> => {
     if (role === 'admin') {
         const users = await userDB.getAllUsers();
         return users;
-    } else if (role === 'student' || role === 'lecturer' || role === 'guest') {
+    } else if (role === 'user' ) {
+        console.log(username);
+
         const user = await userDB.getUserByUsername({ username });
+        console.log(user);
         return user ? [user] : [];
     } else {
         throw new Error('Invalid role');

@@ -5,38 +5,60 @@ import UserService from '@services/UserService';
 import { useEffect, useState } from 'react';
 import { User } from '@types';
 
-const peopleInfo = () => {
+const PeopleInfo = () => {
     const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true); // Loading state
+    const [error, setError] = useState<string | null>(null); // Error state
 
     useEffect(() => {
         const fetchUsers = async () => {
+            let loggedInUser = sessionStorage.getItem('loggedInUser');
+            const user = loggedInUser ? JSON.parse(loggedInUser) : null;
+
+            if (!user || !user.username || !user.role) {
+                setError('Invalid or missing user session data.');
+                setIsLoading(false);
+                return;
+            }
+
             try {
-                const response = await UserService.getAllUsers();
+                const response = await UserService.getAllUsers({
+                    username: user.username,
+                    role: user.role,
+                });
+
                 setUsers(response);
-                console.log('Users:', response);
             } catch (error) {
                 console.error('Error fetching users:', error);
+                setError('Failed to fetch users. Please try again later.');
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchUsers();
     }, []);
 
+    console.log(users);
+
     return (
         <>
             <Header />
             <Head>
-                <title>info about user </title>
+                <title>Info about Users</title>
             </Head>
-
             <main className="d-flex flex-column align-items-center">
-                <h1>info about</h1>
-                <UserTable users={users} />
+                <h1>Info about Users</h1>
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : error ? (
+                    <p style={{ color: 'red' }}>{error}</p>
+                ) : (
+                    <UserTable users={users} />
+                )}
             </main>
         </>
     );
 };
 
-export default peopleInfo;
-
-
+export default PeopleInfo;

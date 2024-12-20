@@ -186,7 +186,7 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
     try {
         const userInput = <UserInput>req.body;
         const response = await userService.authenticate(userInput);
-        res.status(200).json({ message: 'Authentication successful', token: response.token });
+        res.status(200).json({ message: 'Authentication successful', token: response.token,username:response.username,role:response.role });
     } catch (error) {
         next(error);
     }
@@ -210,9 +210,9 @@ userRouter.get('/username/:username', async (req: Request, res: Response, next: 
     }
 });
 
-userRouter.get('/getUsers', async (req: Request, res: Response, next: NextFunction) => {
+userRouter.post('/getUsers', async (req: Request, res: Response, next: NextFunction) => {
     const userInput = <UserInput>req.body;
-    const users=userService.getUsers(userInput)
+    const users= await userService.getUsers(userInput)
     res.status(200).json(users);
 }
 );

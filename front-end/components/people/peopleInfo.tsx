@@ -1,29 +1,29 @@
 import React from 'react';
-import { User } from '@types'; 
+import { User } from '@types';
 
-const UserTable: React.FC<{ users: User[] }> = ({ users }) => {
-  return (
-    <div className="container mt-4">
-      <table className="table table-bordered table-striped">
+const UserTable = ({ users }: { users: User[] }) => (
+    <table className="table">
         <thead>
-          <tr>
-            <th>#</th>
-            <th>Username</th>
-            <th>Role</th>
-          </tr>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+            </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.username}</td>
-              <td>{user.role}</td>
-            </tr>
-          ))}
+            {users.length > 0 ? (
+                users.map((user) => (
+                    <tr key={user.id}>
+                        <td>{user.username}</td>
+                        <td>{user.role}</td>
+                    </tr>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan={2}>No users available.</td>
+                </tr>
+            )}
         </tbody>
-      </table>
-    </div>
-  );
-};
+    </table>
+);
 
 export default UserTable;
