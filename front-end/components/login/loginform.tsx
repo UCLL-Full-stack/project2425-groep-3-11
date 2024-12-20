@@ -26,20 +26,20 @@ const Loginform: React.FC = () => {
             const response = await UserService.loginUser(user);
 
             if (response.token) {
-                // Extract details from the response
                 const { token, username: loggedInUsername, role } = response;
 
-                // Save user details in session storage
-                const loggedInUser = {
-                token: response.token,
-                username: response.username,
-                role: response.role,
-            };
+                sessionStorage.removeItem('loggedInUser');
+                console.log('Login Response:', response);
 
-            // Save user details in session storage with the key "loggedInUser"
-            sessionStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-            console.log("Logged in user:", loggedInUser);
-                
+                const loggedInUser = {
+                    token: token,
+                    username: loggedInUsername,
+                    role: role,
+                };
+
+                sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+                console.log('Logged in user:', loggedInUser);
+
                 alert('Login successful!');
                 router.push('/');
             } else {
@@ -68,17 +68,15 @@ const Loginform: React.FC = () => {
             username,
             email,
             password,
-            role: 'user', // Default role
+            role: 'user', 
         };
 
         try {
             const response = await UserService.registerUser(data);
 
             if (response.token) {
-                // Extract details from the response
                 const { token, username: registeredUsername, role } = response;
 
-                // Save user details in session storage
                 sessionStorage.setItem('token', token);
                 sessionStorage.setItem('username', registeredUsername);
                 sessionStorage.setItem('role', role);

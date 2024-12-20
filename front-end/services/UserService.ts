@@ -42,16 +42,17 @@ const loginUser = async (user: User) => {
     }
 };
 
-const getAllUsers = async () => {
+const getAllUsers = async (userData: User) => {
     try {
         const loggedInUser = sessionStorage.getItem('loggedInUser');
         const token = loggedInUser ? JSON.parse(loggedInUser).token : null;
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-            method: 'GET',
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/getUsers`, {
+            method: 'POST',
+            body: JSON.stringify(userData),
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: token ? `Bearer ${token}` : '', 
+                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -59,7 +60,10 @@ const getAllUsers = async () => {
             throw new Error(`Failed to get users: ${response.statusText}`);
         }
 
-        return await response.json();
+        const data = await response.json(); 
+        console.log(data); 
+        return data; 
+
     } catch (error) {
         console.error(error);
         return null;

@@ -17,6 +17,14 @@ const main = async () => {
             role: 'user',
         },
     });
+    const user3 = await prisma.user.create({
+        data: {
+            username: 'admin',
+            email: 'admin@mail.com',
+            password: await bcrypt.hash('adminspassword', 12),
+            role: 'admin',
+        },
+    });
 
     const toyTrain = await prisma.product.create({
         data: {
