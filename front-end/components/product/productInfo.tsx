@@ -60,9 +60,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
       const fetchedReviews = await ReviewService.getReviewsForProduct(product.id.toString()); // Assuming product.id is a number, convert to string
       if (fetchedReviews) {
-        setReviews(fetchedReviews);  // Update state with the fetched reviews
+        setReviews(fetchedReviews);  
       } else {
-        setReviews([]); // If no reviews found
+        setReviews([]); 
       }
     };
 
