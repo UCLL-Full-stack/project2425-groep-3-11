@@ -9,8 +9,10 @@ import { reviewRouter } from './controller/review.routes';
 import { shoppingcartRouter } from './controller/shoppingcart.routes';
 import { userRouter } from './controller/user.routes';
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
 
 const app = express();
+app.use(helmet());
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
@@ -30,6 +32,7 @@ app.use(
             '/status',
             '/products',
             /^\/products\/.*/,
+            /^\/reviews\/product\/[^/]+$/,
             // Added for testing purposes
             // '/shoppingcart',
             // /^\/shoppingcart\/.*/,
