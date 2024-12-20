@@ -45,4 +45,16 @@ const authenticate = async ({ username, password }: UserInput): Promise<Authenti
 const getUserById = async (id: number): Promise<User | null> => {
     return userDB.getUserById(id);
 };
-export default { createUser, authenticate, getUserByUsername, getUserById };
+const getUsers = async ({ username, role }: UserInput): Promise<User[]> => {
+    if (role === 'admin') {
+        const users = await userDB.getAllUsers();
+        return users;
+    } else if (role === 'student' || role === 'lecturer' || role === 'guest') {
+        const user = await userDB.getUserByUsername({ username });
+        return user ? [user] : [];
+    } else {
+        throw new Error('Invalid role');
+    }
+}
+
+export default { createUser, authenticate, getUserByUsername, getUserById,getUsers };

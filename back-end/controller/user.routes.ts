@@ -210,4 +210,11 @@ userRouter.get('/username/:username', async (req: Request, res: Response, next: 
     }
 });
 
+userRouter.get('/getUsers', async (req: Request, res: Response, next: NextFunction) => {
+    const userInput = <UserInput>req.body;
+    const users=userService.getUsers(userInput)
+    res.status(200).json(users);
+}
+);
+
 export { userRouter };
