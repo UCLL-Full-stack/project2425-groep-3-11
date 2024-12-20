@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import UserService from '@services/UserService';
 import { useRouter } from 'next/router';
+
 const Loginform: React.FC = () => {
     const [isLogin, setIsLogin] = useState(true);
     const router = useRouter();
@@ -68,7 +69,7 @@ const Loginform: React.FC = () => {
             username,
             email,
             password,
-            role: 'user', 
+            role: 'user',
         };
 
         try {
@@ -91,6 +92,12 @@ const Loginform: React.FC = () => {
             alert('Registration failed. Please check your details or try again later.');
         }
     };
+
+    // Sample data for table
+    const users = [
+        { username: 'milan', password: 'milanspassword' },
+        { username: 'admin', password: 'adminspassword' },
+    ];
 
     return (
         <div style={styles.container}>
@@ -161,6 +168,25 @@ const Loginform: React.FC = () => {
                         </button>
                     </form>
                 )}
+
+                {/* User Data Table */}
+                <h2 style={styles.tableHeader}>User Data</h2>
+                <table style={styles.table}>
+                    <thead>
+                        <tr>
+                            <th style={styles.tableHeaderCell}>Username</th>
+                            <th style={styles.tableHeaderCell}>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user, index) => (
+                            <tr key={index} style={styles.tableRow}>
+                                <td style={styles.tableCell}>{user.username}</td>
+                                <td style={styles.tableCell}>{user.password}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
@@ -236,6 +262,32 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '4px',
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',
+    },
+    tableHeader: {
+        marginTop: '30px',
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: '10px',
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+    },
+    tableHeaderCell: {
+        backgroundColor: '#007BFF',
+        color: 'white',
+        padding: '10px',
+        textAlign: 'left',
+        fontSize: '1rem',
+    },
+    tableRow: {
+        backgroundColor: '#f9f9f9',
+    },
+    tableCell: {
+        padding: '10px',
+        border: '1px solid #ddd',
+        textAlign: 'left',
     },
 };
 

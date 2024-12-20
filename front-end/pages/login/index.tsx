@@ -5,6 +5,11 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSideProps } from 'next';
 
 const ProductIndexPage = () => {
+    const users = [
+        { username: 'milan', password: 'milanspassword' },
+        { username: 'admin', password: 'adminspassword' },
+    ];
+
     return (
         <>
             <Header />
@@ -13,8 +18,10 @@ const ProductIndexPage = () => {
             </Head>
 
             <main className="d-flex flex-column align-items-center">
-                <h1>please login or register if you dont have an account yet</h1>
+                <h1>please login or register if you don't have an account yet</h1>
                 <Loginform />
+
+
             </main>
         </>
     );
@@ -28,4 +35,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
     };
 };
+
 export default ProductIndexPage;
