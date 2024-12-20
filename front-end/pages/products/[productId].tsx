@@ -7,6 +7,8 @@ import ProductService from "@services/ProductService";
 import ProductInfo from "@components/product/productInfo";
 import ReviewForm from "@components/review/addReviewForm";
 import Header from "@components/header";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetServerSideProps } from 'next';
 
 const ReadProductById = () => {
   const [product, setProduct] = useState<Product | null>(null);
@@ -55,4 +57,12 @@ const ReadProductById = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { locale } = context;
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
+};
 export default ReadProductById;

@@ -5,6 +5,8 @@ import UserService from '@services/UserService';
 import { useEffect, useState } from 'react';
 import { User } from '@types';
 import Link from 'next/link'; 
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetServerSideProps } from 'next';
 
 const PeopleInfo = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -70,4 +72,12 @@ const PeopleInfo = () => {
     );
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { locale } = context;
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
+};
 export default PeopleInfo;

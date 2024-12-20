@@ -2,6 +2,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Header from '@components/header';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetServerSideProps } from 'next';
 
 const Home: React.FC = () => {
     const router = useRouter();
@@ -30,6 +32,15 @@ const Home: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { locale } = context;
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default Home;
