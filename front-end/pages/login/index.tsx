@@ -5,10 +5,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSideProps } from 'next';
 
 const ProductIndexPage = () => {
-    const users = [
-        { username: 'milan', password: 'milanspassword' },
-        { username: 'admin', password: 'adminspassword' },
-    ];
+
 
     return (
         <>
