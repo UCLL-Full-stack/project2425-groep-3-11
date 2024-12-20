@@ -96,9 +96,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   
   
   return (
+    <> 
     <div className="flex flex-col md:flex-row items-start text-left p-4">
-      <img src={image} alt={product.name} className="w-40 h-40 rounded-lg mb-4 md:mb-0 md:mr-6" />
-
+      <div className='gird grid-cols-1'>
+      <img src={image} alt={product.name} className="w-70 h-70 rounded-lg mb-4 md:mb-0 md:mr-6" />
       <div className="flex flex-col space-y-2">
         <h2 className="text-xl font-semibold">{product.name}</h2>
         <p className="text-gray-700">{product.description}</p>
@@ -112,8 +113,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             {loading ? 'Adding...' : 'Add to cart'} 
         </button>
       </div>
+      </div>
 
-      <div className="flex flex-col items-center mt-4 md:ml-6">
+      <div className="flex flex-col items-center mt-4 md:ml-6 m-4">
         <div className="mb-1">
           <span className="text-lg font-semibold">{averageRating.toFixed(1)} / 5</span>
         </div>
@@ -129,16 +131,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             {reviews.map(review => (
               <li key={review.id} className="border-b pb-2">
                   <div className="flex items-center mb-1">
-                    {[...Array(5)].map((_, index) => ( 
-                      <FontAwesomeIcon 
-                        key={index} 
-                        icon={solidStar} 
-                        className={`text-sm ${index < review.score ? 'text-yellow-500' : 'text-gray-300'} ${
-                          index >= review.score ? 'opacity-50' : 'opacity-100'
-                        }`}
-                      />
-                    ))}
-                    <span className="text-sm text-gray-500 ml-2"> {review.score}/5 </span>
+
+                    <span className="text-m font-bold text-gray-500 ml-2"> {review.score}/5 </span>
                     <span className="text-sm text-gray-500 ml-2">{new Date(review.date).toLocaleDateString()}</span>
                   </div>
                 <p className="text-gray-700">{review.comment}</p>
@@ -150,6 +144,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
