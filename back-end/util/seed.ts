@@ -65,6 +65,33 @@ const main = async () => {
             role: 'user',
         },
     });
+    await prisma.review.create({
+        data: {
+            score: 4,
+            comment: 'Great product!',
+            date: new Date('2024-01-05'),
+            product: {
+                connect: { id: smartwatch.id },
+            },
+            user: {
+                connect: { id: user2.id },
+            },
+        },
+    });
+
+    await prisma.review.create({
+        data: {
+            score: 5,
+            comment: 'Excellent quality and very comfortable to wear.',
+            date: new Date('2024-01-06'),
+            product: {
+                connect: { id: backpack.id },
+            },
+            user: {
+                connect: { id: user2.id },
+            },
+        },
+    });
 
     await prisma.review.create({
         data: {
