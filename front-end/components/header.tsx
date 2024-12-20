@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Language from './language/language';
 
 const Header: React.FC = () => {
     const [userName, setUserName] = useState('');
     const [userRole, setUserRole] = useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null); 
 
     useEffect(() => {
         let loggedInUser = sessionStorage.getItem('loggedInUser');
@@ -24,6 +26,25 @@ const Header: React.FC = () => {
 
         setUserName(user.username || '');
         setUserRole(user.role || 'guest');
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setDropdownVisible(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const handleLogout = () => {
@@ -62,6 +83,7 @@ const Header: React.FC = () => {
                             {userRole === 'guest' ? 'a guest' : `logged in as ${userName}`}.
                         </span>
                         <button
+                            ref={buttonRef} 
                             onClick={toggleDropdown}
                             className="px-4 text-xl text-white hover:bg-gray-600 rounded-lg"
                             style={{
@@ -73,7 +95,10 @@ const Header: React.FC = () => {
                             {userName || 'Guest'}
                         </button>
                         {dropdownVisible && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                            <div
+                                ref={dropdownRef} 
+                                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10"
+                            >
                                 {userRole !== 'guest' && (
                                     <>
                                         <Link
@@ -86,14 +111,14 @@ const Header: React.FC = () => {
                                 )}
                                 {userRole === 'guest' ? (
                                     <Link
-                                        href="/login" // Redirects to the login page
+                                        href="/login" 
                                         className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
                                     >
                                         Login
                                     </Link>
                                 ) : (
                                     <button
-                                        onClick={handleLogout} // Calls handleLogout when clicked
+                                        onClick={handleLogout} 
                                         className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
                                     >
                                         Logout
