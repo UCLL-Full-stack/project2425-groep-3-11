@@ -11,6 +11,19 @@
       "total": "Totaal",
       "checkout": "Afrekenen",
       "title": "Winkelwagen"
+    },
+    "nav": {
+      "products": "Producten",
+      "shoppingCart": "Winkelwagentje"
+    },
+    "header": {
+      "loggedInStatus": "Je bent momenteel {{role}} als {{name}}.",
+      "guest": "Gast"
+    },
+    "dropdown": {
+      "profile": "Profiel",
+      "login": "Inloggen",
+      "logout": "Uitloggen"
     }
   }
   

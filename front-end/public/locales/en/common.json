@@ -12,5 +12,18 @@
     "checkout": "Checkout",
     "title": "Shopping Cart"
 
+  },
+  "nav": {
+    "products": "Products",
+    "shoppingCart": "Shopping Cart"
+  },
+  "header": {
+    "loggedInStatus": "You are currently {{role}} as {{name}}.",
+    "guest": "Guest"
+  },
+  "dropdown": {
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout"
   }
 }
