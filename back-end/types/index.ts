@@ -32,6 +32,9 @@ type AuthenticationResponse = {
     username: string;
     role: string;
 };
+
+
 type Role = 'admin' | 'user' |  'guest';
+
 
 export { UserInput, ReviewInput, ProductInput, ShoppingCartInput, Role, AuthenticationResponse };

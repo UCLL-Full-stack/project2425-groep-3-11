@@ -9,7 +9,7 @@ const product = new Product({
     price: 10,
     description: 'description1',
     stock: 10,
-    reviews: [],
+    // reviews: [],
 });
 
 let createProductMock: jest.Mock;
