@@ -1,4 +1,4 @@
-import { Review } from '../../model/review'; // Adjust the import according to your project structure
+import { Review } from '../../model/review';
 import reviewService from '../../service/review.service';
 import reviewDb from '../../repository/review.db';
 import productDb from '../../repository/product.db';
